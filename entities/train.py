@@ -39,5 +39,4 @@ class Train:
         elif self.target_station_index == 0:
             self.direction = 1
         
-        else:
-            self.target_station_index += self.direction
+        self.target_station_index += self.direction
