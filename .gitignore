@@ -1,0 +1,13 @@
+# Fichiers de compilation/cache Python
+__pycache__/
+*.pyc
+
+# Dossier d'environnement virtuel
+venv311/
+.venv/
+
+# Fichiers de configuration de l'IDE/Editeur (VS Code)
+.vscode/
+
+# Fichiers de log, etc.
+*.log
