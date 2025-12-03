@@ -24,6 +24,10 @@ class Train:
             
             if self.speed >= distance_remaining:
                 self.pos = target_pos
+                self.passengers = []
+                new_passenger = target_station.unload_all_passenger()
+                self.passengers.extend(new_passenger)
+
                 self._change_target()
             else:
                 move_vector = direction_vector.normalize() * self.speed

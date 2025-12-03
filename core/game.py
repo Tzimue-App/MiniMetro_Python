@@ -29,12 +29,13 @@ class Game:
         
         self.stations.append(Station(100, 100, random.choice(shapes)))
         self.stations.append(Station(300, 500, random.choice(shapes)))
+        self.stations.append(Station(500, 250, random.choice(shapes)))
         self.stations.append(Station(700, 200, random.choice(shapes)))
 
         for _ in range(5):
             self.stations[0].add_passenger(1) 
 
-        initial_stations = [self.stations[0], self.stations[1]]
+        initial_stations = [self.stations[0], self.stations[1], self.stations[3]]
         self.lines.append(Line(initial_stations))
 
         self.trains.append(Train(self.lines[0]))

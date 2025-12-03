@@ -10,6 +10,14 @@ class Station:
         
     def add_passenger(self, passenger):
         self.passengers.append(passenger)
+    
+    def get_passenger_count(self):
+        return self.passengers
+    
+    def unload_all_passenger(self):
+        passengers_to_board = self.passengers
+        self.passengers = []
+        return passengers_to_board
 
     def draw(self, screen):
         match self.shape_type:
