@@ -1,5 +1,7 @@
 import pygame
 
+from core.constants import WHITE, SHAPE_TYPE
+
 class Train:
 
     def __init__(self, line):
@@ -7,12 +9,23 @@ class Train:
         self.pos = line.stations[0].pos.copy()
         self.target_station_index = 1
         self.speed = 1
-        self.passengers = []
+        self.passengers = {shape: [] for shape in SHAPE_TYPE} 
+        self.capacity = 5
         self.direction = 1
 
     def draw (self, screen):
         pygame.draw.circle(screen, self.line.color, self.pos, 5)
-    
+
+        passenger_counts = {shape: len(queue) for shape, queue in self.passengers.items()}
+
+        font = pygame.font.Font(None, 24)
+        
+        y_offset = -10
+        for shape, count in passenger_counts.items():
+            text = font.render(f"{shape[0]}: {count}", True, WHITE) # Ex: C: 2
+            screen.blit(text, (self.pos.x + 5, self.pos.y + y_offset))
+            y_offset -= 15
+        
     def update(self):
         target_station = self.line.stations[self.target_station_index]
         target_pos = target_station.pos.copy()
@@ -24,9 +37,25 @@ class Train:
             
             if self.speed >= distance_remaining:
                 self.pos = target_pos
-                self.passengers = []
-                new_passenger = target_station.unload_all_passenger()
-                self.passengers.extend(new_passenger)
+                station_target_type = target_station.shape_type
+
+                for shape in SHAPE_TYPE:
+                    if shape == station_target_type:
+                        self.passengers[shape] = []
+                    else:
+                        pass 
+
+                current_count = sum(len(queue) for queue in self.passengers.values())
+                space_available = self.capacity - current_count
+
+                if space_available > 0:
+                    new_passengers = target_station.board_passengers(space_available)
+                    
+                    for p in new_passengers:
+                        if p.shape_type in self.passengers:
+                            self.passengers[p.shape_type].append(p)
+                        else:
+                            print(f"Erreur: Passager de type {p.shape_type} inconnu") 
 
                 self._change_target()
             else:
