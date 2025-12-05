@@ -22,7 +22,7 @@ class Train:
         
         y_offset = -10
         for shape, count in passenger_counts.items():
-            text = font.render(f"{shape[0]}: {count}", True, WHITE) # Ex: C: 2
+            text = font.render(f"{shape[0]}: {count}", True, WHITE)
             screen.blit(text, (self.pos.x + 5, self.pos.y + y_offset))
             y_offset -= 15
         
@@ -49,7 +49,7 @@ class Train:
                 space_available = self.capacity - current_count
 
                 if space_available > 0:
-                    new_passengers = target_station.board_passengers(space_available)
+                    new_passengers = target_station.board_passengers(space_available, self._get_boarding_priority())
                     
                     for p in new_passengers:
                         if p.shape_type in self.passengers:
@@ -73,3 +73,26 @@ class Train:
             self.direction = 1
         
         self.target_station_index += self.direction
+
+    def _get_boarding_priority(self):
+        stations = self.line.stations
+        num_stations = len(stations)
+        
+        start_index = self.target_station_index + self.direction 
+        
+        boarding_priority_shape = []
+
+        if self.direction == 1:
+            range_stations = range(start_index, num_stations, 1)
+        else:
+            range_stations = range(start_index, -1, -1)
+            
+        for i in range_stations:
+
+            if 0 <= i < num_stations:
+                station = stations[i]
+
+                if station.shape_type not in boarding_priority_shape:
+                    boarding_priority_shape.append(station.shape_type)
+        
+        return boarding_priority_shape

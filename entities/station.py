@@ -12,11 +12,11 @@ class Station:
     def add_passenger(self, passenger):
         self.passengers[passenger.shape_type].append(passenger)
     
-    def board_passengers(self, max_count):
+    def board_passengers(self, max_count, boarding_priority_shape):
         passengers_to_board = []
         space_left = max_count
 
-        for shape in SHAPE_TYPE:
+        for shape in boarding_priority_shape:
             queue = self.passengers[shape]
             
             if space_left <= 0:
