@@ -18,12 +18,18 @@ class Train:
     def draw (self, screen):
         pygame.draw.circle(screen, self.line.color, (int(self.pos.x), int(self.pos.y)), 5)
 
-        font = pygame.font.Font(None, 20)
-        y_offset = -15
         
-        total_passengers = sum(len(queue) for queue in self.passengers.values())
-        text = font.render(str(total_passengers), True, WHITE)
-        screen.blit(text, (self.pos.x + 8, self.pos.y + y_offset))
+        font = pygame.font.Font(None, 18)
+        y_offset = -30
+        
+        passenger_counts = {shape: len(queue) for shape, queue in self.passengers.items()}
+        
+        for shape, count in passenger_counts.items():
+            if count > 0:
+                text = font.render(f"{shape[0].upper()}: {count}", True, WHITE)
+                
+                screen.blit(text, (self.pos.x + 8, self.pos.y + y_offset))
+                y_offset += 15
         
     def update(self):
         target_pos = self.line.nodes[self.target_index].copy()

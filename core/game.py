@@ -48,6 +48,9 @@ class Game:
         if current_time > self.last_passenger_spawn_time + self.SPAWN_INTERVAL:
             random.choice(self.stations).add_passenger(Passenger(random.choice(SHAPE_TYPE)))
             self.last_passenger_spawn_time = current_time
+        
+        for station in self.stations:
+            station.update()
 
         for train in self.trains:
             train.update()  

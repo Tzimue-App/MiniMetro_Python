@@ -9,6 +9,7 @@ SCREEN_HEIGHT = 450
 # Couleurs (format RGB)
 BLACK = (0, 0, 0)
 WHITE = (255, 255, 255)
+RED = (255, 0, 0)
 BACKGROUND_COLOR = (40, 40, 40)
 GRID_COLOR = (80, 80, 80)
 
@@ -16,3 +17,4 @@ GRID_COLOR = (80, 80, 80)
 FPS = 60
 STATION_RADIUS = 10
 SHAPE_TYPE = ['circle', 'square', 'triangle']
+LONG_WAIT_THRESHOLD = 900
