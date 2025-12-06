@@ -1,10 +1,16 @@
 import pygame
 
-from core.constants import STATION_RADIUS, WHITE, SHAPE_TYPE
+from core.constants import STATION_RADIUS, WHITE, SHAPE_TYPE, GRID_SIZE
 
 class Station:
-    def __init__(self, x, y, shape_type):
-        self.pos = pygame.math.Vector2(x, y)
+    def __init__(self, grid_x, grid_y, shape_type):
+        self.grid_pos = (grid_x, grid_y)
+
+        center_x = grid_x * GRID_SIZE + GRID_SIZE // 2
+        center_y = grid_y * GRID_SIZE + GRID_SIZE // 2
+
+        self.pos = pygame.math.Vector2(center_x, center_y)
+
         self.shape_type = shape_type
         self.passengers = {shape: [] for shape in SHAPE_TYPE}
         self.radius = STATION_RADIUS
