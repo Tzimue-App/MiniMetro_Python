@@ -23,6 +23,8 @@ class Game:
         self.last_passenger_spawn_time = pygame.time.get_ticks() 
         self.SPAWN_INTERVAL = 2000
 
+        self.money = 5
+
         self._initialize_map()
 
     def _initialize_map(self):
@@ -61,42 +63,47 @@ class Game:
                 self.running = False
             
             if event.type == pygame.KEYDOWN and event.key == pygame.K_RETURN:
-                if self.drawing_line and self.current_line_stations:
-                    
-                    last_point_pos = self.current_line_stations[-1]
-                    
-                    is_closing_on_station = False
-                    
-                    stations_on_new_line = [] 
-                    
-                    for point_pos in self.current_line_stations:
-                        for station in self.stations:
-                            if station.pos == point_pos:
-                                stations_on_new_line.append(station)
-                                
-                                if point_pos == last_point_pos:
-                                    is_closing_on_station = True
-                                    
-                                break
-                    
-                    
-                    if is_closing_on_station:
-                        if len(self.current_line_stations) >= 2:
-                            
-                            positions_list = self.current_line_stations 
-                            
-                            stations_list = stations_on_new_line
-                            
-                            self.lines.append(Line(positions_list, stations_list))
-                            self.trains.append(Train(self.lines[-1]))
-                            
-                        else:
-                            print("Ligne annulée : Pas assez de segments.")
-                            
-                        self.current_line_stations = []
-                        self.drawing_line = False
+                if self.money > COST_NEW_LINE:
 
-                        return
+                    if self.drawing_line and self.current_line_stations:
+                        
+                        last_point_pos = self.current_line_stations[-1]
+                        
+                        is_closing_on_station = False
+                        
+                        stations_on_new_line = [] 
+                        
+                        for point_pos in self.current_line_stations:
+                            for station in self.stations:
+                                if station.pos == point_pos:
+                                    stations_on_new_line.append(station)
+                                    
+                                    if point_pos == last_point_pos:
+                                        is_closing_on_station = True
+                                        
+                                    break
+                        
+                        
+                        if is_closing_on_station:
+                            if len(self.current_line_stations) >= 2:
+                                
+                                positions_list = self.current_line_stations 
+                                
+                                stations_list = stations_on_new_line
+                                
+                                self.lines.append(Line(positions_list, stations_list))
+                                self.trains.append(Train(self.lines[-1]))
+                                self.money -= COST_NEW_LINE
+                                
+                            else:
+                                print("Ligne annulée : Pas assez de segments.")
+                                
+                            self.current_line_stations = []
+                            self.drawing_line = False
+
+                            return
+                else:
+                    print("Not enough money")
 
             
             if event.type == pygame.MOUSEBUTTONDOWN:
@@ -146,6 +153,12 @@ class Game:
             
     def draw(self):
         self.screen.fill(BACKGROUND_COLOR)
+
+        money_font = pygame.font.Font(None, 18)
+        money_text = money_font.render(f"money : {self.money}", True, WHITE)
+        self.screen.blit(money_text, (15, 15))
+
+
         
         for x in range(0, SCREEN_WIDTH + 1, GRID_SIZE):
             start_pos = (x, 0)

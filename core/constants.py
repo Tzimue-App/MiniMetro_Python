@@ -18,3 +18,4 @@ FPS = 60
 STATION_RADIUS = 10
 SHAPE_TYPE = ['circle', 'square', 'triangle']
 LONG_WAIT_THRESHOLD = 900
+COST_NEW_LINE = 1
