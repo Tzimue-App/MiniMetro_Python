@@ -20,8 +20,10 @@ class Game:
         self.drawing_line = False
         self.current_line_stations = []
 
-        self.last_passenger_spawn_time = pygame.time.get_ticks() 
+        self.last_passenger_spawn_time = pygame.time.get_ticks()
+        self.last_money_time = pygame.time.get_ticks()
         self.SPAWN_INTERVAL = 2000
+        self.MONEY_INTERVAL = 10000
 
         self.money = 5
 
@@ -50,6 +52,10 @@ class Game:
         if current_time > self.last_passenger_spawn_time + self.SPAWN_INTERVAL:
             random.choice(self.stations).add_passenger(Passenger(random.choice(SHAPE_TYPE)))
             self.last_passenger_spawn_time = current_time
+
+        if current_time > self.last_money_time + self.MONEY_INTERVAL:
+            self.money += 1
+            self.last_money_time = current_time
         
         for station in self.stations:
             station.update()
