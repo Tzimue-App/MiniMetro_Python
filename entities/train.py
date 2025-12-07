@@ -43,11 +43,11 @@ class Train:
                 self.pos = target_pos
                 
                 actual_station = self._get_actual_station(target_pos) 
+
+                self._change_target()
                 
                 if actual_station:
                     self._handle_station_stop(actual_station) 
-
-                self._change_target()
                 
             else:
                 move_vector = direction_vector.normalize() * self.speed
@@ -74,16 +74,13 @@ class Train:
                 self.passengers[p.shape_type].append(p)
     
     def _change_target(self):
-        
-        num_positions = len(self.line.nodes)
 
-        if self.target_index == num_positions - 1:
-            self.direction = -1
+        if self.target_index == len(self.line.nodes) - 1:
+            self.line.nodes.reverse()
+            self.line.stations.reverse()
+            self.target_index = 0
         
-        elif self.target_index == 0:
-            self.direction = 1
-        
-        self.target_index += self.direction
+        self.target_index += 1
 
     def _get_boarding_priority(self):
         
@@ -91,16 +88,22 @@ class Train:
         num_stations = len(stations)
         
         boarding_priority_shape = []
-
-        current_station_index = 0
-        current_pos = self.line.nodes[self.target_index]
+        
+        current_station_index = -1
+        current_pos = self.pos 
+        
         for i, station in enumerate(stations):
             if station.pos == current_pos:
                 current_station_index = i
                 break
         
+        if current_station_index == -1:
+            print("Erreur: Index de station actuel non trouvé.")
+            return []
+        
         if self.direction == 1:
-            range_stations = range(current_station_index + 1, num_stations, 1)
+            range_stations = range(current_station_index + 1, num_stations)
+        
         else:
             range_stations = range(current_station_index - 1, -1, -1)
             
@@ -109,4 +112,5 @@ class Train:
             if station.shape_type not in boarding_priority_shape:
                 boarding_priority_shape.append(station.shape_type)
         
+        print(boarding_priority_shape)
         return boarding_priority_shape
