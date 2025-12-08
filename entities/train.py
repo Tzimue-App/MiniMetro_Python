@@ -6,6 +6,9 @@ class Train:
 
     def __init__(self, line):
         self.line = line
+
+        self.nodes = line.nodes[:]
+        self.stations = line.stations[:]
         
         self.pos = line.nodes[0].copy() 
         
@@ -32,7 +35,7 @@ class Train:
                 y_offset += 15
         
     def update(self):
-        target_pos = self.line.nodes[self.target_index].copy()
+        target_pos = self.nodes[self.target_index].copy()
         
         direction_vector = target_pos - self.pos
         distance_remaining = direction_vector.length()
@@ -54,7 +57,7 @@ class Train:
                 self.pos += move_vector
 
     def _get_actual_station(self, position):
-        for station in self.line.stations: 
+        for station in self.stations: 
             if station.pos == position:
                 return station
         return None 
@@ -76,15 +79,15 @@ class Train:
     def _change_target(self):
 
         if self.target_index == len(self.line.nodes) - 1:
-            self.line.nodes.reverse()
-            self.line.stations.reverse()
+            self.nodes.reverse()
+            self.stations.reverse()
             self.target_index = 0
         
         self.target_index += 1
 
     def _get_boarding_priority(self):
         
-        stations = self.line.stations
+        stations = self.stations
         num_stations = len(stations)
         
         boarding_priority_shape = []
@@ -101,11 +104,7 @@ class Train:
             print("Erreur: Index de station actuel non trouvé.")
             return []
         
-        if self.direction == 1:
-            range_stations = range(current_station_index + 1, num_stations)
-        
-        else:
-            range_stations = range(current_station_index - 1, -1, -1)
+        range_stations = range(current_station_index + 1, num_stations)
             
         for i in range_stations:
             station = stations[i]

@@ -22,8 +22,10 @@ class Game:
 
         self.last_passenger_spawn_time = pygame.time.get_ticks()
         self.last_money_time = pygame.time.get_ticks()
+        self.last_train_time = pygame.time.get_ticks()
         self.SPAWN_INTERVAL = 2000
         self.MONEY_INTERVAL = 10000
+        self.TRAIN_INTERVAL = 30000
 
         self.money = 5
 
@@ -56,6 +58,12 @@ class Game:
         if current_time > self.last_money_time + self.MONEY_INTERVAL:
             self.money += 1
             self.last_money_time = current_time
+
+            if current_time > self.last_train_time + self.TRAIN_INTERVAL:
+                if self.lines:
+                    self.trains.append(Train(random.choice(self.lines)))
+                    self.last_train_time = current_time
+                    print("New Train add")
         
         for station in self.stations:
             station.update()
