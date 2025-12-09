@@ -63,13 +63,13 @@ class Game:
                 if self.lines:
                     self.trains.append(Train(random.choice(self.lines)))
                     self.last_train_time = current_time
-                    print("New Train add")
+                    print("New Train")
         
         for station in self.stations:
             station.update()
 
         for train in self.trains:
-            train.update()  
+            self.money += train.update()  
 
     def handle_events(self):
         for event in pygame.event.get():

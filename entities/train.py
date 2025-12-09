@@ -16,7 +16,6 @@ class Train:
         self.speed = 1
         self.passengers = {shape: [] for shape in SHAPE_TYPE} 
         self.capacity = 5
-        self.direction = 1
 
     def draw (self, screen):
         pygame.draw.circle(screen, self.line.color, (int(self.pos.x), int(self.pos.y)), 5)
@@ -40,6 +39,8 @@ class Train:
         direction_vector = target_pos - self.pos
         distance_remaining = direction_vector.length()
 
+        points = 0
+
         if distance_remaining > 0: 
             
             if self.speed >= distance_remaining:
@@ -50,11 +51,13 @@ class Train:
                 self._change_target()
                 
                 if actual_station:
-                    self._handle_station_stop(actual_station) 
+                    points = self._handle_station_stop(actual_station) 
                 
             else:
                 move_vector = direction_vector.normalize() * self.speed
                 self.pos += move_vector
+        
+        return points
 
     def _get_actual_station(self, position):
         for station in self.stations: 
@@ -65,6 +68,7 @@ class Train:
     def _handle_station_stop(self, station):
         station_target_type = station.shape_type
 
+        passenger_unboard = len(self.passengers[station_target_type])
         self.passengers[station_target_type] = []
             
         current_count = sum(len(queue) for queue in self.passengers.values())
@@ -75,6 +79,8 @@ class Train:
             
             for p in new_passengers:
                 self.passengers[p.shape_type].append(p)
+
+        return passenger_unboard
     
     def _change_target(self):
 
