@@ -70,11 +70,16 @@ class Train:
 
         passenger_unboard = len(self.passengers[station_target_type])
         self.passengers[station_target_type] = []
+
+        priority_shapes, futures_stations = self._get_boarding_priority()
+
+        stale_passengers = self._get_stale_passengers(futures_stations)
+
+        for stale_passenger in stale_passengers:
+            self.passengers[stale_passenger.shape_type].remove(stale_passenger)
             
         current_count = sum(len(queue) for queue in self.passengers.values())
         space_available = self.capacity - current_count
-
-        priority_shapes, futures_stations = self._get_boarding_priority()
         
         if space_available > 0:
             
@@ -86,7 +91,7 @@ class Train:
                 if space_available <= 0:
                     break
                 
-                is_on_route = any(p.target_station_type == fs.shape_type for fs in future_stations)
+                is_on_route = any(p.shape_type == fs.shape_type for fs in futures_stations)
                 
                 if is_on_route:
                     passengers_to_board.append(p)
@@ -137,3 +142,16 @@ class Train:
         
         print(boarding_priority_shape)
         return boarding_priority_shape,  future_stations
+    
+    def _get_stale_passengers(self, futures_stations):
+
+        accessible_shape = {fs.shape_type for fs in futures_stations}
+
+        stale_passengers = []
+
+        for passenger_list in self.passengers.values():
+            for p in passenger_list:
+
+                if p.shape_type not in accessible_shape:
+                    stale_passengers.append(p)
+        return stale_passengers
