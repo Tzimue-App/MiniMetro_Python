@@ -18,25 +18,18 @@ class Station:
     def add_passenger(self, passenger):
         self.passengers[passenger.shape_type].append(passenger)
     
-    def board_passengers(self, max_count, boarding_priority_shape):
+    def get_boarding_candidates(self, boarding_priority_shape):
         passengers_to_board = []
-        space_left = max_count
 
         for shape in boarding_priority_shape:
             queue = self.passengers[shape]
             
-            if space_left <= 0:
-                break
-            
-            num_to_take = min(space_left, len(queue))
-            
-            passengers_to_board.extend(queue[:num_to_take])
-            
-            self.passengers[shape] = queue[num_to_take:]
-            
-            space_left -= num_to_take
+            passengers_to_board.extend(queue)
             
         return passengers_to_board
+    
+    def remove_passenger(self, passenger):
+        self.passengers[passenger.shape_type].remove(passenger)
 
 
     def draw(self, screen):

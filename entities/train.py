@@ -73,12 +73,28 @@ class Train:
             
         current_count = sum(len(queue) for queue in self.passengers.values())
         space_available = self.capacity - current_count
+
+        priority_shapes, futures_stations = self._get_boarding_priority()
         
         if space_available > 0:
-            new_passengers = station.board_passengers(space_available, self._get_boarding_priority())
             
-            for p in new_passengers:
+            boarding_candidates = station.get_boarding_candidates(priority_shapes)
+            
+            passengers_to_board = []
+            
+            for p in boarding_candidates:
+                if space_available <= 0:
+                    break
+                
+                is_on_route = any(p.target_station_type == fs.shape_type for fs in future_stations)
+                
+                if is_on_route:
+                    passengers_to_board.append(p)
+                    space_available -= 1
+                
+            for p in passengers_to_board:
                 self.passengers[p.shape_type].append(p)
+                station.remove_passenger(p) 
 
         return passenger_unboard
     
@@ -97,6 +113,7 @@ class Train:
         num_stations = len(stations)
         
         boarding_priority_shape = []
+        future_stations = []
         
         current_station_index = -1
         current_pos = self.pos 
@@ -108,14 +125,15 @@ class Train:
         
         if current_station_index == -1:
             print("Erreur: Index de station actuel non trouvé.")
-            return []
+            return [], []
         
         range_stations = range(current_station_index + 1, num_stations)
             
         for i in range_stations:
-            station = stations[i]
+            station = stations[i] 
+            future_stations.append(station)  
             if station.shape_type not in boarding_priority_shape:
                 boarding_priority_shape.append(station.shape_type)
         
         print(boarding_priority_shape)
-        return boarding_priority_shape
+        return boarding_priority_shape,  future_stations
