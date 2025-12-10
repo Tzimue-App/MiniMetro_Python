@@ -14,6 +14,8 @@ class Station:
         self.shape_type = shape_type
         self.passengers = {shape: [] for shape in SHAPE_TYPE}
         self.radius = STATION_RADIUS
+
+        self.is_overcrowded = False
         
     def add_passenger(self, passenger):
         self.passengers[passenger.shape_type].append(passenger)
@@ -31,19 +33,19 @@ class Station:
     def remove_passenger(self, passenger):
         self.passengers[passenger.shape_type].remove(passenger)
 
-
     def draw(self, screen):
+
+        self.is_overcrowded = False
         
-        is_alert = False
         for queue in self.passengers.values():
             for passenger in queue:
                 if passenger.waiting_timer > LONG_WAIT_THRESHOLD:
-                    is_alert = True
+                    self.is_overcrowded = True
                     break
-            if is_alert:
+            if self.is_overcrowded:
                 break
                 
-        station_color = RED if is_alert else WHITE
+        station_color = RED if self.is_overcrowded else WHITE
 
         match self.shape_type:
             case "circle":

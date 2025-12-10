@@ -12,6 +12,7 @@ class Game:
         self.screen = screen
         self.running = True
         self.clock = pygame.time.Clock()
+        self.time_elaspe = 0
         
         self.stations = []
         self.lines = []
@@ -36,10 +37,7 @@ class Game:
         self.stations.append(Station(3, 3, random.choice(SHAPE_TYPE)))
         self.stations.append(Station(7, 4, random.choice(SHAPE_TYPE)))
         self.stations.append(Station(10, 12, random.choice(SHAPE_TYPE)))
-        self.stations.append(Station(9, 11, random.choice(SHAPE_TYPE)))
-
-        for _ in range(5):
-            self.stations[0].add_passenger(Passenger(random.choice(SHAPE_TYPE))) 
+        self.stations.append(Station(9, 11, random.choice(SHAPE_TYPE))) 
 
         initial_positions = [self.stations[0].pos, self.stations[1].pos, self.stations[3].pos]
         
@@ -50,26 +48,45 @@ class Game:
         self.trains.append(Train(self.lines[0]))
 
     def update(self):
-        current_time = pygame.time.get_ticks()
-        if current_time > self.last_passenger_spawn_time + self.SPAWN_INTERVAL:
-            random.choice(self.stations).add_passenger(Passenger(random.choice(SHAPE_TYPE)))
-            self.last_passenger_spawn_time = current_time
+        self.time_elaspe = pygame.time.get_ticks()
 
-        if current_time > self.last_money_time + self.MONEY_INTERVAL:
+        if self.time_elaspe % 1000 == 0:
+            if self.SPAWN_INTERVAL > 20:
+                self.SPAWN_INTERVAL -= 5
+                print(self.SPAWN_INTERVAL)
+
+
+        if self.time_elaspe > self.last_passenger_spawn_time + self.SPAWN_INTERVAL:
+
+            r_station = random.choice(self.stations)
+            r_passenger_shape = random.sample([shape for shape in SHAPE_TYPE if shape != r_station.shape_type], 1)[0]
+
+            r_station.add_passenger(Passenger(r_passenger_shape))
+            self.last_passenger_spawn_time = self.time_elaspe
+
+
+        if self.time_elaspe > self.last_money_time + self.MONEY_INTERVAL:
             self.money += 1
-            self.last_money_time = current_time
+            self.last_money_time = self.time_elaspe
 
-            if current_time > self.last_train_time + self.TRAIN_INTERVAL:
+            if self.time_elaspe > self.last_train_time + self.TRAIN_INTERVAL:
                 if self.lines:
                     self.trains.append(Train(random.choice(self.lines)))
-                    self.last_train_time = current_time
+                    self.last_train_time = self.time_elaspe
                     print("New Train")
         
         for station in self.stations:
             station.update()
 
         for train in self.trains:
-            self.money += train.update()  
+            self.money += train.update()
+
+        for station in self.stations:
+            if station.is_overcrowded:
+                print("GAME OVER")
+                self.running = False
+                break
+
 
     def handle_events(self):
         for event in pygame.event.get():
